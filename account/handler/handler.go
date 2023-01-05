@@ -5,19 +5,21 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jacobsngoodwin/memrizr/model"
+	"github.com/jacobsngoodwin/memrizr/account/model"
 )
 
 // Handler struct holds required services for handler to function
 type Handler struct{
-	UserService model.UserService
+	UserService 	model.UserService
+	TokenService 	model.TokenService
 }
 
 // Config will hold services that will eventually be injected into this
 // handler layer on handler initialization
 type Config struct {
 	R *gin.Engine
-	UserService model.UserService
+	UserService 	model.UserService
+	TokenService 	model.TokenService
 }
 
 // NewHandler initializes the handler with required injected services along with http routes
@@ -25,7 +27,8 @@ type Config struct {
 func NewHandler(c *Config) {
 	// Create a handler (which will later have injected services)
 	h := &Handler{
-		UserService: c.UserService,
+		UserService: 	c.UserService,
+		TokenService: 	c.TokenService,
 	} // currently has no properties
 
 	// Create an account group
@@ -41,12 +44,7 @@ func NewHandler(c *Config) {
 	g.PUT("/details", h.Details)
 }
 
-// Signup handler
-func (h *Handler) Signup(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"hello": "it's signup",
-	})
-}
+
 
 // Signin handler
 func (h *Handler) Signin(c *gin.Context) {
