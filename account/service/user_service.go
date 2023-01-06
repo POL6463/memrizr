@@ -27,5 +27,9 @@ func (s *UserService) Get(ctx context.Context, uid uuid.UUID) (*model.User ,erro
 }
 
 func (s *UserService) Signup(ctx context.Context, u *model.User) error {
-	panic("Method not implemented")
+	if err := s.UserRepository.Create(ctx, u); err != nil {
+		return err
+	}
+
+	return nil
 }
