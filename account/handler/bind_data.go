@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,16 @@ type invalidArgument struct {
 }
 
 func bindData(c *gin.Context, req interface{}) bool {
+	if c.ContentType() != "application/json" {
+		msg := fmt.Sprintf("%s only accepts Content-Type application/json", c.FullPath())
+
+		err := apperrors.NewUnsupportedMediaType(msg)
+
+		c.JSON(err.Status(), gin.H{
+			"error": err,
+		})
+		return false
+	}
 
 	if err := c.ShouldBind(req); err != nil {
 		log.Printf("Error binding data: %+v\n", err)
