@@ -2,9 +2,12 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jacobsngoodwin/memrizr/account/handler/middleware"
 	"github.com/jacobsngoodwin/memrizr/account/model"
+	"github.com/jacobsngoodwin/memrizr/account/model/apperrors"
 )
 
 // Handler struct holds required services for handler to function
@@ -20,6 +23,7 @@ type Config struct {
 	UserService 	model.UserService
 	TokenService 	model.TokenService
 	BaseURL 		string
+	TimeoutDuration time.Duration
 }
 
 // NewHandler initializes the handler with required injected services along with http routes
@@ -33,6 +37,10 @@ func NewHandler(c *Config) {
 
 	// Create an account group
 	g := c.R.Group(c.BaseURL)
+
+	if gin.Mode() != gin.TestMode {
+		g.Use(middleware.Timeout(c.TimeoutDuration, apperrors.NewServiceUnavailable()))
+	}
 
 	g.GET("/me", h.Me)
 	g.POST("/signup", h.Signup)
@@ -48,6 +56,7 @@ func NewHandler(c *Config) {
 
 // Signin handler
 func (h *Handler) Signin(c *gin.Context) {
+	time.Sleep(6 * time.Second)
 	c.JSON(http.StatusOK, gin.H{
 		"hello": "it's signin",
 	})
