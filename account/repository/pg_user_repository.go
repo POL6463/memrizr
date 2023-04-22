@@ -39,10 +39,22 @@ func (r *pgUserRepository) Create(ctx context.Context, u *model.User) error {
 func (r *pgUserRepository) FindByID(ctx context.Context, uid uuid.UUID) (*model.User, error) {
 	user := &model.User{}
 
-	query := "SELECT * FROm users WHERE uid=$1"
+	query := "SELECT * FROM users WHERE uid=$1"
 
 	if err := r.DB.GetContext(ctx, user, query, uid); err != nil {
 		return user, apperrors.NewNotFound("uid", uid.String())
+	}
+
+	return user, nil
+}
+
+func (r *pgUserRepository) FindByEmail(ctx context.Context, email string) (*model.User, error) {
+	user := &model.User{}
+
+	query := "SELECT * FROM users WHERE email=$1"
+
+	if err := r.DB.GetContext(ctx, user, query, email); err != nil {
+		return user, apperrors.NewNotFound("email", email)
 	}
 
 	return user, nil
