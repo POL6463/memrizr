@@ -83,11 +83,11 @@ func TestNewPairFromUser(t *testing.T) {
 		mockTokenRepository.AssertCalled(t, "DeleteRefreshToken", deleteWithPrevIDArguments...)
 
 		var s string
-		assert.IsType(t, s, tokenPair.IDToken)
+		assert.IsType(t, s, tokenPair.IDToken.SS)
 
-		idTokenClaims := &IDTokenCustomClaims{}
+		idTokenClaims := &idTokenCustomClaims{}
 
-		_, err = jwt.ParseWithClaims(tokenPair.IDToken, idTokenClaims, func(token *jwt.Token) (interface{}, error) {
+		_, err = jwt.ParseWithClaims(tokenPair.IDToken.SS, idTokenClaims, func(token *jwt.Token) (interface{}, error) {
 			return pubKey, nil
 		})
 
@@ -115,13 +115,13 @@ func TestNewPairFromUser(t *testing.T) {
 		expectedExpiresAt := time.Now().Add(time.Duration(idExp) * time.Second)
 		assert.WithinDuration(t, expectedExpiresAt, expiresAt, 5*time.Second)
 
-		refreshTokenClaims := &RefreshTokenCustomClaims{}
-		_, err = jwt.ParseWithClaims(tokenPair.RefreshToken, refreshTokenClaims,
+		refreshTokenClaims := &refreshTokenCustomClaims{}
+		_, err = jwt.ParseWithClaims(tokenPair.RefreshToken.SS, refreshTokenClaims,
 		func(t *jwt.Token) (interface{}, error) {
 			return []byte(secret), nil
 		})
 
-		assert.IsType(t, s, tokenPair.RefreshToken)
+		assert.IsType(t, s, tokenPair.RefreshToken.SS)
 
 		assert.NoError(t, err)
 		assert.Equal(t, u.UID, refreshTokenClaims.UID)
