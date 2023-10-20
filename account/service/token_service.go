@@ -74,6 +74,11 @@ func (s *tokenService) NewPairFromUser(ctx context.Context, u *model.User, prevT
 	}, nil
 }
 
+//Signout reaches out to the repository layer to delete all valid token for a user
+func (s *tokenService) Signout(ctx context.Context, uid uuid.UUID) error {
+	return s.TokenRepository.DeleateUserRefreshTokens(ctx, uid.String())
+}
+
 func (s *tokenService) ValidateIDToken(tokenString string) (*model.User, error) {
 	claims, err := validateIDToken(tokenString, s.PubKey)
 
