@@ -46,8 +46,8 @@ go.work
 .ionide
 
 .idea/
-
+.DS_Store
 *.pem
-
+account/service_account.json
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,go

@@ -59,3 +59,23 @@ func (r *pgUserRepository) FindByEmail(ctx context.Context, email string) (*mode
 
 	return user, nil
 }
+
+func (r *pgUserRepository) UpdateImage(ctx context.Context, uid uuid.UUID, imageURL string) (*model.User, error) {
+	query := `
+		UPDATE users
+		SET image_url = $2
+		WHERE uid = $1
+		RETURNING *;
+	`
+
+	u := &model.User{}
+
+	err := r.DB.GetContext(ctx, u, query, uid, imageURL)
+
+	if err != nil {
+		log.Printf("Error updating image_url in database: %v\n", err)
+		return nil, apperrors.NewInternal()
+	}
+
+	return u, nil
+}

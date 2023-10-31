@@ -18,11 +18,19 @@ import (
 func inject(d *dataSources) (*gin.Engine, error) {
 	log.Println("Injecting data sources")
 
+	/*
+	* repotory layer
+	*/
 	userRepository := repository.NewUserRepository(d.DB)
 	tokenRepository := repository.NewTokenRepository(d.RedisClient)
 
+	bucketName := os.Getenv("GC_IMAGE_BUCKET")
+	imageRepository := repository.NewImageRepository(d.StorageClient, bucketName)
+
+	//service layer
 	userService := service.NewUserService(&service.USConfig{
 		UserRepository: userRepository,
+		ImageRepository: imageRepository,
 	})
 
 	privKeyFile := os.Getenv("PRIV_KEY_FILE")
